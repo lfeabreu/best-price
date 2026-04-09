@@ -7,6 +7,7 @@
   <title>Melhor Preço</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="https://kit.fontawesome.com/f565fa176c.js" crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <link rel="stylesheet" href="styles.css" />
 </head>
 
@@ -14,16 +15,30 @@
   <div id="loader-modal" class="loader-modal">
     <div class="loader"></div>
   </div>
-  <h1>Melhor Preço</h1>
+  <h1>🤑 Melhor Preço</h1>
 
-  <div class="search-bar">
-    <label for="termo-codigo">Termo / Código de Barras</label>
-    <input type="text" id="termo-codigo" placeholder="Digite o termo ou código de barras" />
-    <button id="btn-scanner" title="Escanear código de barras" class="btn"><i class="fa-solid fa-barcode"></i></button>
-    <button id="btn-buscar" class="btn">Buscar</button>
+  <div class="search-bar container">
+    <div class="row">
+      <div class="col-12">
+        <label for="termo-codigo" class="form-label d-block mb-2">Termo / Código de Barras</label>
+      </div>
+    </div>
+    <div class="row g-2 align-items-stretch">
+      <div class="col-12 col-md">
+        <div class="input-group flex-nowrap">
+          <input type="text" id="termo-codigo" placeholder="Digite o termo ou código de barras" class="form-control"/>
+          <button type="button" id="btn-scanner" title="Escanear código de barras" class="btn btn-outline-primary"><i class="fa-solid fa-barcode"></i></button>
+        </div>
+      </div>
+      <div class="col-12 col-md-auto d-flex">
+        <button type="button" id="btn-buscar" class="btn btn-primary w-100 w-md-auto h-100"><i class="fa-solid fa-magnifying-glass-dollar"></i> Buscar</button>
+      </div>
+    </div>
   </div>
 
-  <div id="resultado">O resultado aparecerá aqui.</div>
+  <div id="resultado" class="container container-fluid">
+    O resultado aparecerá aqui.
+  </div>
 
   <!-- Scanner Modal -->
   <div id="scanner-modal" class="scanner-modal">
@@ -38,6 +53,7 @@
   </div>
 
   <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 
 </html>
