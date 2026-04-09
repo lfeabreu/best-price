@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Melhor Preço</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://kit.fontawesome.com/f565fa176c.js" crossorigin="anonymous"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -38,7 +39,7 @@
       border-radius: 4px;
     }
 
-    #btn-buscar {
+    .btn {
       padding: 10px 20px;
       font-size: 16px;
       background-color: #007bff;
@@ -48,7 +49,7 @@
       cursor: pointer;
     }
 
-    #btn-buscar:hover {
+    .btn:hover {
       background-color: #0056b3;
     }
 
@@ -244,8 +245,8 @@
       id="termo-codigo"
       placeholder="Digite o termo ou código de barras"
     />
-    <button id="btn-buscar">Buscar</button>
-    <button id="btn-scanner" title="Escanear código de barras">📷</button>
+    <button id="btn-scanner" title="Escanear código de barras" class="btn"><i class="fa-solid fa-barcode"></i></button>
+    <button id="btn-buscar" class="btn">Buscar</button>
   </div>
 
   <div id="resultado">O resultado aparecerá aqui.</div>
