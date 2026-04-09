@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Melhor Preço</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .search-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .search-bar label {
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    #codigo-barras {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    #btn-buscar {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #btn-buscar:hover {
+      background-color: #0056b3;
+    }
+
+    #resultado {
+      white-space: pre-wrap;
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 16px;
+      min-height: 60px;
+    }
+
+    .produto {
+      border-bottom: 1px solid #ddd;
+      padding: 12px 0;
+    }
+
+    .produto:last-child {
+      border-bottom: none;
+    }
+
+    .produto-nome {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .produto-preco {
+      color: #007bff;
+      font-size: 18px;
+      margin-top: 4px;
+    }
+
+    .produto-local {
+      color: #555;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .erro {
+      color: #cc0000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Melhor Preço</h1>
+
+  <div class="search-bar">
+    <label for="codigo-barras">Código de Barras</label>
+    <input
+      type="text"
+      id="codigo-barras"
+      placeholder="Digite o código de barras"
+    />
+    <button id="btn-buscar">Buscar</button>
+  </div>
+
+  <div id="resultado">O resultado aparecerá aqui.</div>
+
+  <script>
+    document.getElementById('btn-buscar').addEventListener('click', buscar);
+    document.getElementById('codigo-barras').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') buscar();
+    });
+
+    // Parâmetros da API Nota Paraná
+    var LOCAL_ID     = '6gdz0n7rz'; // Identificador de localização (Curitiba/PR)
+    var SEARCH_RAIO  = 20;           // Raio de busca em quilômetros
+    var DATE_FILTER  = -1;           // -1 = qualquer data
+    var SORT_ORDER   = 0;            // 0 = ordenar por menor preço
+    var OFFSET       = 0;            // Início da paginação
+
+    function buscar() {
+      var codigoBarras = document.getElementById('codigo-barras').value.trim();
+      var resultadoDiv = document.getElementById('resultado');
+
+      if (!codigoBarras) {
+        mostrarErro(resultadoDiv, 'Por favor, informe o código de barras.');
+        return;
+      }
+
+      resultadoDiv.textContent = 'Buscando…';
+
+      var url =
+        'https://menorpreco.notaparana.pr.gov.br/api/v1/produtos' +
+        '?local=' + LOCAL_ID +
+        '&offset=' + OFFSET +
+        '&raio=' + SEARCH_RAIO +
+        '&gtin=' + encodeURIComponent(codigoBarras) +
+        '&data=' + DATE_FILTER +
+        '&ordem=' + SORT_ORDER;
+
+      fetch(url)
+        .then(function (response) {
+          if (!response.ok) {
+            var msg = 'Erro na requisição: ' + response.status;
+            if (response.status === 404) {
+              msg = 'Produto não encontrado (código inválido ou não cadastrado).';
+            } else if (response.status >= 500) {
+              msg = 'Erro no servidor. Tente novamente mais tarde.';
+            }
+            throw new Error(msg);
+          }
+          return response.json();
+        })
+        .then(function (data) {
+          exibirResultado(data);
+        })
+        .catch(function (err) {
+          mostrarErro(resultadoDiv, 'Não foi possível obter o resultado: ' + err.message);
+        });
+    }
+
+    function mostrarErro(container, mensagem) {
+      var span = document.createElement('span');
+      span.className = 'erro';
+      span.textContent = mensagem;
+      container.innerHTML = '';
+      container.appendChild(span);
+    }
+
+    function exibirResultado(data) {
+      var resultadoDiv = document.getElementById('resultado');
+
+      if (!data || !data.produtos || data.produtos.length === 0) {
+        resultadoDiv.textContent = 'Nenhum produto encontrado para este código de barras.';
+        return;
+      }
+
+      resultadoDiv.innerHTML = '';
+      data.produtos.forEach(function (produto) {
+        var div = document.createElement('div');
+        div.className = 'produto';
+
+        var nome = document.createElement('div');
+        nome.className = 'produto-nome';
+        nome.textContent = produto.dsc || produto.nome || 'Produto sem descrição';
+
+        var preco = document.createElement('div');
+        preco.className = 'produto-preco';
+        preco.textContent = produto.vl !== undefined
+          ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(produto.vl)
+          : '';
+
+        var local = document.createElement('div');
+        local.className = 'produto-local';
+        local.textContent = produto.nmEstabelecimento || produto.estabelecimento || '';
+
+        div.appendChild(nome);
+        if (produto.vl !== undefined) div.appendChild(preco);
+        if (local.textContent) div.appendChild(local);
+
+        resultadoDiv.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
