@@ -29,7 +29,7 @@
       white-space: nowrap;
     }
 
-    #codigo-barras {
+    #termo-codigo {
       flex: 1;
       padding: 10px;
       font-size: 16px;
@@ -166,11 +166,11 @@
   <h1>Melhor Preço</h1>
 
   <div class="search-bar">
-    <label for="codigo-barras">Código de Barras</label>
+    <label for="termo-codigo">Termo / Código de Barras</label>
     <input
       type="text"
-      id="codigo-barras"
-      placeholder="Digite o código de barras"
+      id="termo-codigo"
+      placeholder="Digite o termo ou código de barras"
     />
     <button id="btn-buscar">Buscar</button>
   </div>
@@ -179,7 +179,7 @@
 
   <script>
     document.getElementById('btn-buscar').addEventListener('click', buscar);
-    document.getElementById('codigo-barras').addEventListener('keydown', function (e) {
+    document.getElementById('termo-codigo').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') buscar();
     });
 
@@ -189,8 +189,13 @@
     var SORT_ORDER   = 0;
     var OFFSET       = 0;
 
+    function isValidGTIN(gtin) {
+      const gtinLength = gtin.length;
+      return gtinLength === 8 || gtinLength === 12 || gtinLength === 13 || gtinLength === 14;
+    }
+
     function buscar() {
-      var codigoBarras = document.getElementById('codigo-barras').value.trim();
+      var codigoBarras = document.getElementById('termo-codigo').value.trim();
       var resultadoDiv = document.getElementById('resultado');
 
       if (!codigoBarras) {
@@ -200,12 +205,14 @@
 
       resultadoDiv.textContent = 'Buscando…';
 
+      const tipoBusca = isValidGTIN(codigoBarras) ? 'gtin' : 'termo';
+
       var url =
         'https://menorpreco.notaparana.pr.gov.br/api/v1/produtos' +
         '?local=' + LOCAL_ID +
         '&offset=' + OFFSET +
         '&raio=' + SEARCH_RAIO +
-        '&gtin=' + encodeURIComponent(codigoBarras) +
+        '&' + tipoBusca + '=' + encodeURIComponent(codigoBarras) +
         '&data=' + DATE_FILTER +
         '&ordem=' + SORT_ORDER;
 
