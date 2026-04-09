@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 800px;
+      max-width: 1000px;
       margin: 40px auto;
       padding: 0 20px;
     }
@@ -51,8 +51,26 @@
       background-color: #0056b3;
     }
 
+    .info-header {
+      background-color: #e9ecef;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .info-header div {
+      margin: 8px 0;
+      font-size: 14px;
+    }
+
+    .price-range {
+      font-weight: bold;
+      color: #007bff;
+      font-size: 16px;
+    }
+
     #resultado {
-      white-space: pre-wrap;
       background-color: #f5f5f5;
       border: 1px solid #ddd;
       border-radius: 4px;
@@ -61,33 +79,86 @@
     }
 
     .produto {
-      border-bottom: 1px solid #ddd;
-      padding: 12px 0;
-    }
-
-    .produto:last-child {
-      border-bottom: none;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 16px;
+      margin-bottom: 12px;
     }
 
     .produto-nome {
       font-weight: bold;
       font-size: 16px;
+      color: #333;
+      margin-bottom: 8px;
     }
 
-    .produto-preco {
-      color: #007bff;
+    .produto-preco-container {
+      display: flex;
+      gap: 16px;
+      margin: 12px 0;
+      flex-wrap: wrap;
+    }
+
+    .preco-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preco-label {
+      font-size: 12px;
+      color: #666;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .preco-valor {
       font-size: 18px;
-      margin-top: 4px;
+      font-weight: bold;
+      color: #007bff;
     }
 
-    .produto-local {
-      color: #555;
+    .preco-desconto {
+      color: #28a745;
+    }
+
+    .produto-detalhes {
       font-size: 14px;
+      color: #555;
+      margin: 12px 0;
+      line-height: 1.6;
+    }
+
+    .estabelecimento {
+      background-color: #f9f9f9;
+      border-left: 4px solid #007bff;
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    .estabelecimento-nome {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .estabelecimento-endereco {
+      font-size: 13px;
+      color: #666;
       margin-top: 4px;
     }
 
     .erro {
       color: #cc0000;
+      padding: 16px;
+      background-color: #ffe6e6;
+      border: 1px solid #cc0000;
+      border-radius: 4px;
+    }
+
+    .sem-resultados {
+      color: #666;
+      text-align: center;
+      padding: 24px;
     }
   </style>
 </head>
@@ -112,12 +183,11 @@
       if (e.key === 'Enter') buscar();
     });
 
-    // Parâmetros da API Nota Paraná
-    var LOCAL_ID     = '6gdz0n7rz'; // Identificador de localização (Curitiba/PR)
-    var SEARCH_RAIO  = 20;           // Raio de busca em quilômetros
-    var DATE_FILTER  = -1;           // -1 = qualquer data
-    var SORT_ORDER   = 0;            // 0 = ordenar por menor preço
-    var OFFSET       = 0;            // Início da paginação
+    var LOCAL_ID     = '6gdz0n7rz';
+    var SEARCH_RAIO  = 20;
+    var DATE_FILTER  = -1;
+    var SORT_ORDER   = 0;
+    var OFFSET       = 0;
 
     function buscar() {
       var codigoBarras = document.getElementById('codigo-barras').value.trim();
@@ -172,32 +242,147 @@
       var resultadoDiv = document.getElementById('resultado');
 
       if (!data || !data.produtos || data.produtos.length === 0) {
-        resultadoDiv.textContent = 'Nenhum produto encontrado para este código de barras.';
+        var semResultados = document.createElement('div');
+        semResultados.className = 'sem-resultados';
+        semResultados.textContent = 'Nenhum produto encontrado para este código de barras.';
+        resultadoDiv.innerHTML = '';
+        resultadoDiv.appendChild(semResultados);
         return;
       }
 
       resultadoDiv.innerHTML = '';
+
+      var infoHeader = document.createElement('div');
+      infoHeader.className = 'info-header';
+
+      if (data.tempo) {
+        var tempoDiv = document.createElement('div');
+        tempoDiv.textContent = 'Tempo de busca: ' + data.tempo + 'ms';
+        infoHeader.appendChild(tempoDiv);
+      }
+
+      if (data.total) {
+        var totalDiv = document.createElement('div');
+        totalDiv.textContent = 'Total de resultados: ' + data.total;
+        infoHeader.appendChild(totalDiv);
+      }
+
+      if (data.precos) {
+        var precosDiv = document.createElement('div');
+        precosDiv.className = 'price-range';
+        var precoMin = parseFloat(data.precos.min);
+        var precoMax = parseFloat(data.precos.max);
+        precosDiv.textContent = 'Faixa de preço: R$ ' + precoMin.toFixed(2) + ' a R$ ' + precoMax.toFixed(2);
+        infoHeader.appendChild(precosDiv);
+      }
+
+      resultadoDiv.appendChild(infoHeader);
+
       data.produtos.forEach(function (produto) {
         var div = document.createElement('div');
         div.className = 'produto';
 
         var nome = document.createElement('div');
         nome.className = 'produto-nome';
-        nome.textContent = produto.dsc || produto.nome || 'Produto sem descrição';
-
-        var preco = document.createElement('div');
-        preco.className = 'produto-preco';
-        preco.textContent = produto.vl !== undefined
-          ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(produto.vl)
-          : '';
-
-        var local = document.createElement('div');
-        local.className = 'produto-local';
-        local.textContent = produto.nmEstabelecimento || produto.estabelecimento || '';
-
+        nome.textContent = produto.desc || 'Produto sem descrição';
         div.appendChild(nome);
-        if (produto.vl !== undefined) div.appendChild(preco);
-        if (local.textContent) div.appendChild(local);
+
+        var precoContainer = document.createElement('div');
+        precoContainer.className = 'produto-preco-container';
+
+        if (produto.valor) {
+          var valorDiv = document.createElement('div');
+          valorDiv.className = 'preco-item';
+          var valorLabel = document.createElement('div');
+          valorLabel.className = 'preco-label';
+          valorLabel.textContent = 'Preço Final';
+          var valorValor = document.createElement('div');
+          valorValor.className = 'preco-valor';
+          valorValor.textContent = 'R$ ' + parseFloat(produto.valor).toFixed(2);
+          valorDiv.appendChild(valorLabel);
+          valorDiv.appendChild(valorValor);
+          precoContainer.appendChild(valorDiv);
+        }
+
+        if (produto.valor_desconto && produto.valor_desconto !== '0.00') {
+          var descontoDiv = document.createElement('div');
+          descontoDiv.className = 'preco-item';
+          var descontoLabel = document.createElement('div');
+          descontoLabel.className = 'preco-label';
+          descontoLabel.textContent = 'Desconto';
+          var descontoValor = document.createElement('div');
+          descontoValor.className = 'preco-valor preco-desconto';
+          descontoValor.textContent = 'R$ ' + parseFloat(produto.valor_desconto).toFixed(2);
+          descontoDiv.appendChild(descontoLabel);
+          descontoDiv.appendChild(descontoValor);
+          precoContainer.appendChild(descontoDiv);
+        }
+
+        if (produto.valor_tabela) {
+          var tabelaDiv = document.createElement('div');
+          tabelaDiv.className = 'preco-item';
+          var tabelaLabel = document.createElement('div');
+          tabelaLabel.className = 'preco-label';
+          tabelaLabel.textContent = 'Preço Tabela';
+          var tabelaValor = document.createElement('div');
+          tabelaValor.className = 'preco-valor';
+          tabelaValor.style.color = '#999';
+          tabelaValor.style.textDecoration = 'line-through';
+          tabelaValor.textContent = 'R$ ' + parseFloat(produto.valor_tabela).toFixed(2);
+          tabelaDiv.appendChild(tabelaLabel);
+          tabelaDiv.appendChild(tabelaValor);
+          precoContainer.appendChild(tabelaDiv);
+        }
+
+        if (precoContainer.children.length > 0) {
+          div.appendChild(precoContainer);
+        }
+
+        var detalhes = document.createElement('div');
+        detalhes.className = 'produto-detalhes';
+        var detalhesHTML = '';
+
+        if (produto.tempo) {
+          detalhesHTML += '<strong>Atualização:</strong> ' + produto.tempo + '<br>';
+        }
+
+        if (produto.distkm) {
+          detalhesHTML += '<strong>Distância:</strong> ' + parseFloat(produto.distkm).toFixed(3) + ' km<br>';
+        }
+
+        if (produto.gtin) {
+          detalhesHTML += '<strong>GTIN:</strong> ' + produto.gtin + '<br>';
+        }
+
+        if (detalhesHTML) {
+          detalhes.innerHTML = detalhesHTML;
+          div.appendChild(detalhes);
+        }
+
+        if (produto.estabelecimento) {
+          var est = produto.estabelecimento;
+          var estDiv = document.createElement('div');
+          estDiv.className = 'estabelecimento';
+
+          var estNome = document.createElement('div');
+          estNome.className = 'estabelecimento-nome';
+          estNome.textContent = est.nm_fan || est.nm_emp || 'Estabelecimento desconhecido';
+          estDiv.appendChild(estNome);
+
+          var estEnd = document.createElement('div');
+          estEnd.className = 'estabelecimento-endereco';
+          var endTexto = '';
+          if (est.tp_logr) endTexto += est.tp_logr + ' ';
+          if (est.nm_logr) endTexto += est.nm_logr;
+          if (est.nr_logr) endTexto += ', ' + est.nr_logr;
+          if (est.bairro) endTexto += ' - ' + est.bairro;
+          if (est.mun) endTexto += ' - ' + est.mun;
+          if (est.uf) endTexto += ' (' + est.uf + ')';
+          estEnd.textContent = endTexto;
+          estDiv.appendChild(estEnd);
+
+          div.appendChild(estDiv);
+        }
 
         resultadoDiv.appendChild(div);
       });
