@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Melhor Preço</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -160,6 +161,77 @@
       text-align: center;
       padding: 24px;
     }
+
+    /* Scanner Modal Styles */
+    .scanner-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .scanner-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scanner-modal-content {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .scanner-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .scanner-modal-header h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .scanner-close {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .scanner-close:hover {
+      color: #333;
+    }
+
+    #qr-reader {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+
+    .scanner-status {
+      min-height: 20px;
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .scanner-status.success {
+      color: #28a745;
+    }
+
+    .scanner-status.error {
+      color: #dc3545;
+    }
   </style>
 </head>
 <body>
@@ -173,15 +245,100 @@
       placeholder="Digite o termo ou código de barras"
     />
     <button id="btn-buscar">Buscar</button>
+    <button id="btn-scanner" title="Escanear código de barras">📷</button>
   </div>
 
   <div id="resultado">O resultado aparecerá aqui.</div>
+
+  <!-- Scanner Modal -->
+  <div id="scanner-modal" class="scanner-modal">
+    <div class="scanner-modal-content">
+      <div class="scanner-modal-header">
+        <h2>Escanear Código de Barras</h2>
+        <button class="scanner-close" id="scanner-close">✕</button>
+      </div>
+      <div id="qr-reader"></div>
+      <div class="scanner-status" id="scanner-status"></div>
+    </div>
+  </div>
 
   <script>
     document.getElementById('btn-buscar').addEventListener('click', buscar);
     document.getElementById('termo-codigo').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') buscar();
     });
+
+    // Scanner controls
+    let html5QrcodeScanner = null;
+    const scannerModal = document.getElementById('scanner-modal');
+    const scannerStatus = document.getElementById('scanner-status');
+    let scanned = false;
+
+    document.getElementById('btn-scanner').addEventListener('click', abrirScanner);
+    document.getElementById('scanner-close').addEventListener('click', fecharScanner);
+    scannerModal.addEventListener('click', function (e) {
+      if (e.target === scannerModal) fecharScanner();
+    });
+
+    function abrirScanner() {
+      scannerModal.classList.add('active');
+      scannerStatus.textContent = '';
+
+      html5QrcodeScanner = new Html5Qrcode('qr-reader', {
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.QR_CODE,
+          Html5QrcodeSupportedFormats.CODE_128,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8,
+          Html5QrcodeSupportedFormats.UPC_A,
+          Html5QrcodeSupportedFormats.UPC_E,
+        ]
+      });
+
+      const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 100 },
+        aspectRatio: 2.0,
+        rememberLastUsedCamera: true
+      };
+
+      html5QrcodeScanner
+        .start(
+          { facingMode: 'environment' },
+          config,
+          function onScanSuccess(decodedText, decodedResult) {
+            document.getElementById('termo-codigo').value = decodedText;
+            scannerStatus.textContent = 'Código lido com sucesso!';
+            scannerStatus.className = 'scanner-status success';
+            scanned = true;
+            
+            setTimeout(() => {
+              fecharScanner();
+              buscar();
+            }, 500);
+          },
+          function onScanError(error) {
+            // Silently handle scan errors
+          }
+        )
+        .catch(function (err) {
+          scannerStatus.textContent = 'Erro ao iniciar câmera: ' + err.message;
+          scannerStatus.className = 'scanner-status error';
+          scanned = false;
+        });
+    }
+
+    function fecharScanner() {
+      scannerModal.classList.remove('active');
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner
+          .stop()
+          .catch(function (err) {
+            console.error('Erro ao parar o scanner:', err);
+          });
+        html5QrcodeScanner = null;
+      }
+    }
 
     var LOCAL_ID     = '6gdz0n7rz';
     var SEARCH_RAIO  = 20;
@@ -205,7 +362,7 @@
 
       resultadoDiv.textContent = 'Buscando…';
 
-      const tipoBusca = isValidGTIN(codigoBarras) ? 'gtin' : 'termo';
+      const tipoBusca = isValidGTIN(codigoBarras) || scanned ? 'gtin' : 'termo';
 
       var url =
         'https://menorpreco.notaparana.pr.gov.br/api/v1/produtos' +
