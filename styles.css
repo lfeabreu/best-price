@@ -1,0 +1,306 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+.search-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.search-bar label {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+#termo-codigo {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.info-header {
+    background-color: #e9ecef;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.info-header div {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.price-range {
+    font-weight: bold;
+    color: #007bff;
+    font-size: 16px;
+}
+
+#resultado {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 16px;
+    min-height: 60px;
+}
+
+.produto {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.produto-nome {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.produto-preco-container {
+    display: flex;
+    gap: 16px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+}
+
+.preco-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.preco-label {
+    font-size: 12px;
+    color: #666;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.preco-valor {
+    font-size: 18px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.preco-desconto {
+    color: #28a745;
+}
+
+.produto-detalhes {
+    font-size: 14px;
+    color: #555;
+    margin: 12px 0;
+    line-height: 1.6;
+}
+
+.estabelecimento {
+    background-color: #f9f9f9;
+    border-left: 4px solid #007bff;
+    padding: 12px;
+    flex: 1;
+}
+
+.estabelecimento-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.estabelecimento-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 24px;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+}
+
+.estabelecimento-nav-btn:hover {
+    background-color: #0056b3;
+    text-decoration: none;
+    color: #fff;
+}
+
+.estabelecimento-nome {
+    font-weight: bold;
+    color: #333;
+}
+
+.estabelecimento-endereco {
+    font-size: 13px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.erro {
+    color: #cc0000;
+    padding: 16px;
+    background-color: #ffe6e6;
+    border: 1px solid #cc0000;
+    border-radius: 4px;
+}
+
+.sem-resultados {
+    color: #666;
+    text-align: center;
+    padding: 24px;
+}
+
+/* Scanner Modal Styles */
+.scanner-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.scanner-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scanner-modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scanner-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.scanner-modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.scanner-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #666;
+}
+
+.scanner-close:hover {
+    color: #333;
+}
+
+#qr-reader {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.scanner-status {
+    min-height: 20px;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.scanner-status.success {
+    color: #28a745;
+}
+
+.scanner-status.error {
+    color: #dc3545;
+}
+
+.loader-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.loader-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader {
+    left: 50%;
+    top: 50%;
+    width: 120px;
+    height: 120px;
+    margin: -76px 0 0 -76px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
