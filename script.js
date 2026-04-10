@@ -56,7 +56,7 @@ function abrirScanner() {
     const config = {
         fps: 10,
         qrbox: { width: 250, height: 100 },
-        aspectRatio: 1.0,
+        // aspectRatio: 1.0,
         rememberLastUsedCamera: true
     };
 
