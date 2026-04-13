@@ -16,28 +16,35 @@
   <div id="loader-modal" class="loader-modal">
     <div class="loader"></div>
   </div>
-  <h1>🤑 Melhor Preço</h1>
+
+  <div class="container d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">🤑 Melhor Preço</h1>
+    <div style="min-width: 250px;">
+      <label for="cidade" class="form-label">Cidade</label>
+      <select id="cidade" class="form-select"></select>
+    </div>
+  </div>
 
   <div class="search-bar container">
     <div class="row">
       <div class="col-12">
-        <label for="termo-codigo" class="form-label d-block mb-2">Termo / Código de Barras</label>
+        <label for="termo-codigo" class="form-label">Termo / Código de Barras</label>
       </div>
     </div>
-    <div class="row g-2 align-items-stretch">
+    <div class="row g-2 align-items-stretch mb-3">
       <div class="col-12 col-md">
         <div class="input-group flex-nowrap">
           <input type="text" id="termo-codigo" placeholder="Digite o termo ou código de barras" class="form-control"/>
-          <button type="button" id="btn-scanner" title="Escanear código de barras" class="btn btn-outline-primary"><i class="fa-solid fa-barcode"></i></button>
+          <button type="button" id="btn-scanner" title="Escanear código de barras" class="btn btn-outline-success"><i class="fa-solid fa-barcode"></i></button>
         </div>
       </div>
       <div class="col-12 col-md-auto d-flex">
-        <button type="button" id="btn-buscar" class="btn btn-primary w-100 w-md-auto h-100"><i class="fa-solid fa-magnifying-glass-dollar"></i> Buscar</button>
+        <button type="button" id="btn-buscar" class="btn btn-success w-100 w-md-auto h-100"><i class="fa-solid fa-magnifying-glass-dollar"></i> Buscar</button>
       </div>
     </div>
   </div>
 
-  <div id="resultado" class="container container-fluid">
+  <div id="resultado" class="container">
     O resultado aparecerá aqui.
   </div>
 
