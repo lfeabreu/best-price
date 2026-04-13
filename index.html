@@ -13,10 +13,9 @@
 </head>
 
 <body>
-  <div id="loader-modal" class="loader-modal">
-    <div class="loader"></div>
-  </div>
-
+  <!-- Alert Container -->
+  <div id="alert-container" class="container mt-3"></div>
+  <!-- Header -->
   <div class="container d-flex justify-content-between align-items-center mb-3">
     <h1 class="mb-0">🤑 Melhor Preço</h1>
     <div style="min-width: 250px;">
@@ -25,6 +24,7 @@
     </div>
   </div>
 
+  <!-- Barra de Busca -->
   <div class="search-bar container">
     <div class="row">
       <div class="col-12">
@@ -44,10 +44,26 @@
     </div>
   </div>
 
+  <!-- Resultado -->
   <div id="resultado" class="container">
     O resultado aparecerá aqui.
   </div>
 
+  <!-- Footer -->
+  <footer class="bg-light text-center py-2 border-top mt-auto">
+    <div class="container">
+      <small class="text-muted">
+        Sistema Melhor Preço
+        <span id="version"></span>
+        • Desenvolvido por <a href="https://github.com/lfeabreu" target="_blank" class="text-decoration-none">Luís Abreu</a>
+      </small>
+    </div>
+  </footer>
+
+  <!-- Loader Modal -->
+  <div id="loader-modal" class="loader-modal">
+    <div class="loader"></div>
+  </div>
   <!-- Scanner Modal -->
   <div id="scanner-modal" class="scanner-modal">
     <div class="scanner-modal-content">
@@ -59,22 +75,18 @@
       <div class="scanner-status" id="scanner-status"></div>
     </div>
   </div>
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>
 
-  <footer class="bg-light text-center py-2 border-top mt-auto">
-    <div class="container">
-      <small class="text-muted">
-        Sistema Melhor Preço<small id="version"></small>
-      </small>
-    </div>
-  </footer>
-
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
   <script src="assets/js/script.js"></script>
   <script src="assets/js/version.js"></script>
   <script>
     document.getElementById("version").innerText =
     " • Versão: " + APP_VERSION;
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 
 </html>
