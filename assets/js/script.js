@@ -6,7 +6,7 @@ var DATE_FILTER = -1;
 var SORT_ORDER = 0;
 var OFFSET = 0;
 
-const botoesAguardar = ["btn-scanner", "btn-buscar"];
+const elementosAguardar = ["termo-codigo", "btn-scanner", "btn-buscar"];
 
 let raios = [];
 for (let i = 0; i <= 20; i++) {
@@ -121,7 +121,7 @@ function buscar() {
     var resultadoDiv = document.getElementById('resultado');
 
     if (!codigoBarras) {
-        mostrarErro(resultadoDiv, 'Por favor, informe o termo ou o código de barras.');
+        showToast('Por favor, informe o termo ou o código de barras.', 'warning');
         return;
     }
 
@@ -158,7 +158,7 @@ function buscar() {
             showToast('Busca realizada com sucesso', 'success');
         })
         .catch(function (err) {
-            mostrarErro(resultadoDiv, 'Não foi possível obter o resultado: ' + err.message);
+            showToast('Não foi possível obter o resultado: ' + err.message, 'danger');
         }).finally(function () {
             loaderModal.classList.remove('active');
         });
@@ -410,7 +410,7 @@ async function fetchData(regiao) {
 }
 
 function desabilitarBotoes(status) {
-    botoesAguardar.forEach(element => {
+    elementosAguardar.forEach(element => {
         const btn = document.getElementById(element);
         if (btn) {
             btn.disabled = status;
