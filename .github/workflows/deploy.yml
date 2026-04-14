@@ -20,12 +20,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0      # pega histórico completo
-          fetch-tags: true    # pega tags
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Generate version.js
         run: |
-          VERSION=$(git describe --tags --always)
+          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
           DATE=$(date +'%Y-%m-%d')
           echo "const APP_VERSION = '$VERSION ($DATE)';" > assets/js/version.js
 
